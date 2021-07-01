@@ -2,6 +2,10 @@
 
 Below I will go over each topic of how I approached this coding exercise and explain my thought processes where relevant. Overall I probably spent about 3 hours total, with the last hour just adding some finishing touches because I really like CSS, and then writing this README 🙂
 
+Site is deployed automatically via commits to the `develop` branch on Netlify and can be seen at https://tartanhub-tonymamo.netlify.app/.
+
+[![Netlify Status](https://api.netlify.com/api/v1/badges/f2d21986-1a63-4541-b9c1-6b0b481a19ae/deploy-status)](https://app.netlify.com/sites/tartanhub-tonymamo/deploys)
+
 ## Scaffolded the Project
 
 - To start things off, I first forked and cloned the project to my computer. Then I ran `npx create-react-app my-app --template typescript` to scaffold a CRA project with the Typescript template
