@@ -1,60 +1,49 @@
 # Coding Exercise
 
-Welcome to the coding exercise, and thank you for your interest in joining 
-the TartanHUB team! The purpose of this coding exercise is to allow us to 
-have a better understanding of your individual approach to development.
+Below I will go over each topic of how I approached this coding exercise and explain my thought processes where relevant. Overall I probably spent about 3 hours total, with the last hour just adding some finishing touches because I really like CSS, and then writing this README 🙂
 
-We respect that your time is valuable, so we ask that you limit the time
-you spend on this exercise to _roughly 2 hours_ from start to finish.
+## Scaffolded the Project
 
-If you find yourself with questions or concerns as you work through this 
-exercise, please reach out to us.
+- To start things off, I first forked and cloned the project to my computer. Then I ran `npx create-react-app my-app --template typescript` to scaffold a CRA project with the Typescript template
+- Added Eslint and Prettier for linting and code formatting. I copied over some files from another project with some basic settings for those as well.
 
-## Guidelines
+## Added a Router
 
-1. Create a fork of this repository to your GitHub account and create a new 
-   branch to work under. When you've finished working, [open a pull request 
-   against this repo and request a review][PR] to let us know you're done. 
-2. You'll be creating a **TypeScript React single-page application**.
-3. The app will consist of two pages: the **Log In** page, and the 
-   **Gallery** page.
-4. We have provided mockups of the two pages under the `./mockups` directory.
-   Please follow the layout of these mockups, but stylistic choices are yours.
+- I debated just using local state (with a `useState` hook) to toggle the two different views, but went for [Reach Router](https://reach.tech/router/) as a quick and lightweight router solution instead. The main reason was to update the URL pathname on route change instead of doing that manually and trying to keep the URL and view in sync, but it is also so quick to set up that I knew it would be quicker.
 
-[PR]: https://docs.github.com/en/github/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request-from-a-fork
+## Code Organization
 
+- Next I started to create some directories in the `src/` folder so I could organize the new files I would be creating soon. I followed a pretty standard pattern (components, hooks, images, styles, utils, and views) for a React project.
+- Did a little cleanup and removed some unused files from the CRA scaffolding, as well as grab a few assets from the TartanHUB website (favicon, logo, color values, etc).
+- I debated setting up aliases for the folders as I normally do in my projects, so I can import from anywhere in the project _without_ the need for relative pathing. This helps prevent needing to do something like `../../../deeply/nested/file';` and instead can do `@components/file`, where `@components` is an alias set up in `tsconfig.json` and `eslintrc.js` so Webpack can find everything. I opted to not do this in the interest of time and project sizes however.
 
-### Log In Page
+## Added CSS-in-JS Solution
 
-The log in form consists of a username field, a password field, and a submit 
-button. If the username and password are not valid, an error message should 
-be shown, otherwise the user should be taken to the gallery page.
+- I haven't used plain ol' CSS, SASS (scss), or Less at all in recent years. CSS in React was annoying in the early time of React, writing it in camelCase and trying to figure out the best way to scope everything. I started using [styled-components](http://styled-components.com/) several years ago when CSS-in-JS solutions were just coming out, and have been a fan of it ever since. So naturally, I installed styled-components and started on a theme file that I would inject into the ThemeProvider, so I could pass down variables to any component without needing imports. I prefer using the ThemeProvider than say CSS Variables because I can strongly type my theme using Typescript and get autocomplete in my IDE.
+- Also added a CSS Reset file that I use in most projects to set up cross-browser consistency and a base set of styling to build upon.
 
-The submitted `username` and `password` should be validated against the set 
-of users found at this endpoint:
+## Started Building UI
 
-```
-https://jsonplaceholder.typicode.com/users
-```
+- From there, I started creating the Login page, just getting the text and inputs on the page. I had to make a few components along the way, namely `<Input>` and `<Button>`. I copied over some basic styling for the Input and Button from another project of mine. I am a big fan of [Formik](https://formik.org/docs/overview), so I added that to handle the form state instead of using `useState` for the two fields. A little overkill, but I knew I could tie some quick validation into it easily.
+- Then I realized I needed a fetch library to hit the provided `users` endpoint, so I added [axios](https://axios-http.com/) for that. To handle the login logic, I `filter()`ed the response data Array and looked for a user that had a matching username and email to the inputted form values. If there was a match, then I would need to consider the user logged in. Not the most robust, but good enough for a quick demo.
+- To store the logged in status, I set up a hook to use `sessionStorage`. I could have just stored it directly in the file, but I knew I would need to read that value later, so it made more sense to create a utility to set and retrieve the value that I could use in multiple files. I found a hook online for `localStorage` that I tweaked to use `sessionStorage`, and simply created a key to store it in.
 
-_Note that the above endpoint does not have a `password` field; instead, 
-treat the `email` field as a password. For example, for the username of 
-`Bret`, the password would be `Sincere@april.biz`._ 
+## Built the Gallery Page
 
-A user session can either be kept in memory, or persisted in `sessionStorage`.
+- Now that I could toggle a logged in state, I created a view for the Gallery, and threw a Log Out button on there so I could toggle the logged in state and make sure it would redirect to the Login page if not logged in.
+- At this point I also created a `<Heading>` component, just to consistently style the `<h1>`s on the two pages.
+- Next I set up a call to the `photos` endpoint, and decided to use the [SWR package](https://swr.vercel.app/) since I knew it could cache the response and make things aster on subsequent visits.
+- From there, I `map()`ed over the data to show 10 thumbnails, and added some styling via `display: grid` for a quick and dirty layout. It is somewhat responsive as is, but normally I would use a proper Grid System with Rows and Columns that I could tweak using my theme's breakpoint values, and control things a little more manually per breakpoint, but that was overkill as well.
+- One little easter egg I added was a loading Skeleton for the images and the sub heading, so that the page has the general layout and size set up while the data from the endpoint is fetching. Set your network speed to something really slow in your browser DevTools to see it in action.
+- Lastly for the Gallery page, I added a `<Modal>` component and passed in the active `item` to display.
 
-### Gallery Page
+## UI Finishing Touches
 
-The gallery page should not be accessible unless the user has logged in 
-successfully. The source of the image gallery images is this endpoint:
+- Added a Nav bar with the logo and a background color to make it look a little nicer
+- Added a PageContainer component to set a max width and center everything
+- Added some quick validation to the form fields, and created an Alert component to show an error message
+- Updated the font and favicon to match TartanHUB's website
 
-```
-https://jsonplaceholder.typicode.com/albums/1/photos
-```
+## Added Cypress Testing
 
-The gallery should show the first 10 images, and should note the total 
-number of images.
-
-Clicking on an image should open a modal with the 
-full-sized image, the `title` written below the image, and a close button in 
-the top right corner.
+- Cypress is my favorite testing tool, so I wrote two quick tests: one to verify that the Log In button works, and another that visiting the Gallery page while logged out redirects to the Log In screen
