@@ -1,7 +1,7 @@
 # Coding Exercise
 
 Welcome to the coding exercise, and thank you for your interest in joining 
-the TartanHUB team! The purpose of this coding exercise is to allow us to 
+the Tartan team! The purpose of this coding exercise is to allow us to 
 have a better understanding of your individual approach to development.
 
 We respect that your time is valuable, so we ask that you limit the time
